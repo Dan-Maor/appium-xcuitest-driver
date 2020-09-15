@@ -15,7 +15,6 @@ function checkFeatureInEnv (envArg) {
 }
 
 const PLATFORM_VERSION = process.env.PLATFORM_VERSION ? process.env.PLATFORM_VERSION : '11.3';
-const LAUNCH_WITH_IDB = process.env.LAUNCH_WITH_IDB;
 
 // If it's real device cloud, don't set a device name. Use dynamic device allocation.
 const DEVICE_NAME = process.env.DEVICE_NAME
@@ -24,6 +23,7 @@ const DEVICE_NAME = process.env.DEVICE_NAME
     ? undefined
     : util.compareVersions(PLATFORM_VERSION, '>=', '13.0') ? 'iPhone 8' : 'iPhone 6';
 
+const LAUNCH_WITH_IDB = checkFeatureInEnv('LAUNCH_WITH_IDB');
 const SHOW_XCODE_LOG = checkFeatureInEnv('SHOW_XCODE_LOG');
 const REAL_DEVICE = checkFeatureInEnv('REAL_DEVICE');
 let XCCONFIG_FILE = process.env.XCCONFIG_FILE;
@@ -86,7 +86,7 @@ let GENERIC_CAPS = {
   platformVersion: PLATFORM_VERSION,
   deviceName: DEVICE_NAME,
   automationName: 'XCUITest',
-  launchWithIDB: !!LAUNCH_WITH_IDB,
+  launchWithIDB: LAUNCH_WITH_IDB,
   noReset: true,
   maxTypingFrequency: 30,
   clearSystemFiles: true,
@@ -94,6 +94,8 @@ let GENERIC_CAPS = {
   wdaLaunchTimeout: (60 * 1000 * 4),
   wdaConnectionTimeout: (60 * 1000 * 8),
   useNewWDA: true,
+  webviewConnectTimeout: 30000,
+  simulatorStartupTimeout: (1000 * 60 * 4),
 };
 
 if (process.env.CLOUD) {
@@ -137,6 +139,7 @@ const SETTINGS_CAPS = _.defaults({
 
 const SAFARI_CAPS = _.defaults({
   browserName: 'Safari',
+  nativeWebTap: false,
   testobject_api_key: process.env.SAUCE_RDC_WEB_ACCESS_KEY,
 }, GENERIC_CAPS, REAL_DEVICE_CAPS);
 
@@ -169,5 +172,5 @@ let TVOS_CAPS = _.defaults({
 export {
   UICATALOG_CAPS, UICATALOG_SIM_CAPS, SAFARI_CAPS, TESTAPP_CAPS,
   PLATFORM_VERSION, TOUCHIDAPP_CAPS, DEVICE_NAME, W3C_CAPS, SETTINGS_CAPS,
-  TVOS_CAPS, MULTIPLE_APPS
+  TVOS_CAPS, MULTIPLE_APPS, GENERIC_CAPS
 };

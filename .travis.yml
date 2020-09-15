@@ -12,6 +12,7 @@ env:
     - _FORCE_LOGS=1
     - RECURSIVE=--recursive
     - MAX_PARALLEL=0
+    - _LOG_TIMESTAMP=1
     - DEBUG=mocha-parallel-tests
     - secure: ls4nb5gcu0USHauJOkB9R5p86PMPJd/wCIQWjj/bhAfLNpSNNthtss2Ss9M7BjJg8lth8c85MrGfkAZOGgXknNtlQ2HHwKK4fbEiLAKLDS9diac6/OpAsxxE1/OvletYhkKLQSqb8d5Ju3S/xY6SmNDIzHUpeTYV2/5Ve+7Fh9zc1RztxsPwV1vxPtL6w0IAzNS9PQOmDXQ6x9KuZModtR7ohVKD47A91MzBlu3kk1CSaeQ4I8l7eXi4R9J6F81jkr51Vzoam4B6+4HTepSdfo02irBQWzaJ3VtRCbazFRBc/wfe4YgOPQTD9k69FiP19sa28lP9eSn6h5OCSXA9M803kju33Ml6OItRWDG0gUG1dzTroVXELEIcfnw1iTsFqKWoJLaEzEiXV8n2RsXLaLC5SHPgKwGEigGMfWDxM9leIC8hgervjQvApmx7btzq9S50tMcrzba5qwXDDrjJi1wKSjd4pQajhSj9VgOH9D5ihZBdn++VLwEvfAd4yQhjdsr9+COV1HrgK7Ro1HAHWgGnPtwBKiQdVU20QdQzNrhRdF2MLrJ4BfWpNm92JwlPxP/ojuA2l8mr9nDqlfBgXlnG32j59988gi85vaMfXssrUXtdJqsKJckI01c/mgaRh9pvG3UPX8K39quKBI5ftS8aCCa8tbF6bLq/ZuI2TRU=
 jobs:
@@ -21,7 +22,6 @@ jobs:
       if: &noncron type != cron
       env:
         - TEST=unit
-        - COVERALLS=1
         - _FORCE_LOGS=0
 
     - stage:
@@ -221,7 +221,6 @@ after_success:
       npm install -g appium-event-parser;
       appium-event-parser -s -i ./ci-metrics;
     fi
-  - if [ ${COVERALLS} = "1" ]; then npm run coverage; fi
 notifications:
   slack:
     secure: gUvI7IXsz0vHK/S0cLCh0zJQhMsKC1PnMldQUzRwEmbJ5Yce2kWUP4Gw8EZ3zNhAvVDVf2R87Fqa2D7nfa/0gDr86n0c/fnVo8z/ctHK01YKnu/GaVEDwJG0WFA439J5Bu6wkbcdc+gncBKU1UenF4IcwcIUyQhkSe65Uc67MqwV1rzLj6JYWEcbI5qAJWJnWxC1Ie2Fqg/uTV4dNzEotcn0h4VF/TgezgAPBJxMuXK8u6r242g0b5B9XqmvOZP+/OsZ610gLNfpf0Piy2m1H/S7WSd51KJe9rJY8e9zihZFNHuc0geKBEgynr2Xtq2Iy+WF6UGM4P2eyhAsumcEJWxFsgjvsVVnhZKb17tvQMpOnayBx/DGpR0l8p3LHSevzGgBhOswNBglhOp7TmfvAzRYqqtphmUqBFRGEVQHsOeaVE/x6KWnFRVl/7ZjP7XE53TuXKqR/TdZzP4xg7u7e7XOvy3ehcqE4NIwL7VAm6vIgF0/2iHIXGf6OXTjBXOMFtEVzNO4rJ2MtnIXLk7ZXRwQgNrjoQKppIawSPdodGsb8NrkY95OJt8e3YzlXpneU93MBzS76SLaQ2TKf1dVXt9ibf/VZt/FTh3UgOQ6eTzkNCAEbUtI+ZA1KoST7tKW3ffQxtphPSkF+pErM37gOAwwmcSnF7WfTc0/1Dsk6i4=

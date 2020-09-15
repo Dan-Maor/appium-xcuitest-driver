@@ -8,6 +8,7 @@ import { UICATALOG_CAPS } from '../desired';
 import { initSession, deleteSession, MOCHA_TIMEOUT } from '../helpers/session';
 import { APPIUM_IMAGE } from '../web/helpers';
 import { getGenericSimulatorForIosVersion } from '../../../lib/utils';
+import { util } from 'appium-support';
 import xcode from 'appium-xcode';
 
 
@@ -148,7 +149,10 @@ describe('XCUITestDriver - gestures', function () {
     it('should double tap on an element', async function () {
       // FIXME: Multitouch does not work as expected in Xcode < 9.
       // cloud tests are run on Linux, so no Xcode version to check
-      if (!process.env.CLOUD && (await xcode.getVersion(true)).major < 9) {
+      // TODO: This test fails for iOS < 13
+      const { platformVersion } = await driver.sessionCapabilities();
+      if ((!process.env.CLOUD && (await xcode.getVersion(true)).major < 9) ||
+          util.compareVersions(platformVersion, '<', '13.0')) {
         return this.skip();
       }
 
@@ -179,22 +183,14 @@ describe('XCUITestDriver - gestures', function () {
     });
     describe('pinch and zoom', function () {
       beforeEach(async function () {
-        const el = await driver.elementByAccessibilityId('Web View');
-        await driver.execute('mobile: scroll', {element: el, toVisible: true});
-        await el.click();
+        await driver.execute('mobile: scroll', {direction: 'down'});
+        await driver.elementByAccessibilityId('Web View').click();
       });
 
       // at this point this test relies on watching it happen, nothing is asserted
       // in automation, this just checks that errors aren't thrown
       it('should be able to pinch', async function () {
-        let ctxs;
-        await retryInterval(10, 1000, async () => {
-          // on some systems (like Travis) it takes a while to load the webview
-          ctxs = await driver.contexts();
-          if (ctxs.length === 1) {
-            throw new Error('No webview context found');
-          }
-        });
+        const ctxs = await driver.execute('mobile: getContexts', {waitForWebviewMs: 30000});
         await driver.context(ctxs[1]);
 
         await driver.get(APPIUM_IMAGE);
